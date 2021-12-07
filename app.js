@@ -1,11 +1,19 @@
-let linksArr = ls.item("links") || [];
+let linksArr = lsItem("links") || [];
 const inputURL = document.getElementById("inputURL");
 const inputText = document.getElementById("inputText");
 const inputTime = document.getElementById("inputTime");
 const form = document.getElementsByClassName("container")[0];
 const linksDiv = document.getElementsByClassName("links")[0];
 const linkDivs = () => document.getElementsByClassName("link");
-// console.log(document.getElementById(''));
+
+function lsItem(key, value) {
+  if (value) localStorage.setItem(key, JSON.stringify(value));
+  else {
+    let temp = localStorage.getItem(key);
+    if (temp) return JSON.parse(temp);
+  }
+}
+
 function deleteLink(id) {
   linksArr.splice(id, 1);
   linkDivs()[id].remove();
@@ -77,7 +85,7 @@ function App() {
     e.preventDefault();
     updateLinks(inputURL.value, inputText.value, inputTime.value, form.id);
   });
-  addEventListener("beforeunload", () => ls.item("links", linksArr));
+  addEventListener("beforeunload", () => lsItem("links", linksArr));
   addEventListener("keydown", (e) => {
     let num = parseInt(e.key);
     if (e.altKey) if (!isNaN(num)) open(linksArr[num - 1].link, "_blank");
