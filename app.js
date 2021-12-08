@@ -29,6 +29,11 @@ let myLink = [
     text: "Accounts",
     time: "11:40",
   },
+  {
+    link: "https://us04web.zoom.us/j/3279834528?pwd=K1IxWkJycUtOQ3RmQzVNMWYrMFYxdz09",
+    text: "Simplifier",
+    time: "18:00",
+  },
 ];
 // {
 //   link: "",
@@ -100,7 +105,7 @@ window.addEventListener("load", () => {
   addEventListener("beforeunload", () => lsItem("links", linksArr));
   addEventListener("keydown", (e) => {
     let num = parseInt(e.key);
-    if (e.altKey) if (!isNaN(num)) open(linksArr[num - 1].link, "_blank");
+    if (e.altKey && !isNaN(num)) open(linksArr[num - 1].link, "_blank");
   });
 });
 
@@ -132,3 +137,5 @@ function createAndAppendTo(tagName, appendTo, html, onclick) {
   if (onclick) e.addEventListener("dblclick", onclick);
   return e;
 }
+
+// javascript: linksArr = myLink
