@@ -1,3 +1,41 @@
+let myLink = [
+  {
+    link: "https://www.google.com/",
+    text: "Google",
+    time: "",
+  },
+  {
+    link: "https://us05web.zoom.us/j/83857138123?pwd=SVJ1ZjFiTHJiWkdIY0l4YXk2YnJxQT09",
+    text: "Business Studies",
+    time: "09:00",
+  },
+  {
+    link: "https://us05web.zoom.us/j/86259438079?pwd=c2xZMDY3VTdDZFlBRzhaWTU3aFpoZz09",
+    text: "Maths",
+    time: "09:40",
+  },
+  {
+    link: "https://us04web.zoom.us/j/77295357372?pwd=MFVCcXpTUDlXSHpmYmNmSEtwWGdhZz09",
+    text: "English",
+    time: "10:20",
+  },
+  {
+    link: "https://us04web.zoom.us/j/71844310834?pwd=MCswUjRLZnhsTmdmOGJoQnFYRTN1QT09",
+    text: "Economics",
+    time: "11:00",
+  },
+  {
+    link: "https://zoom.us/j/4145799977?pwd=UFJMbHcyUVpjMEhjYW9iNzFWeXFtdz09",
+    text: "Accounts",
+    time: "11:40",
+  },
+];
+// {
+//   link: "",
+//   text: "",
+//   time: "",
+// },
+
 let currentEdit = -1;
 let linksArr = lsItem("links") || [];
 linksArr.forEach((e, i) => (e.id = i));
@@ -6,15 +44,9 @@ const inputText = document.getElementById("inputText");
 const inputTime = document.getElementById("inputTime");
 const form = document.getElementsByClassName("container")[0];
 const linksDiv = document.getElementsByClassName("links")[0];
+const wrapper = document.querySelector("wrapper");
 
 function createLink(id, link, text, time) {
-  function createAndAppendTo(tagName, appendTo, html, onclick) {
-    const e = document.createElement(tagName);
-    if (html) e.innerHTML = html;
-    if (appendTo) appendTo.append(e);
-    if (onclick) e.addEventListener("click", onclick);
-    return e;
-  }
   const linkDiv = createAndAppendTo("div", linksDiv);
   const anchorDiv = createAndAppendTo("div", linkDiv);
   const anchor = createAndAppendTo("a", anchorDiv, text || link);
@@ -43,14 +75,15 @@ function paintLinks(newLinksArr) {
 
 function updateLink(link, text, time) {
   if (currentEdit === -1) {
-    let id = linksArr.length;
-    createLink(id, link, text, time);
+    let id = (linksArr[linksArr.length - 1]?.id || -1) + 1;
     linksArr.push({ id, link, text, time });
+    createLink(id, link, text, time);
   } else {
     linksArr.forEach((e, i) => {
       if (e.id === currentEdit) linksArr[i] = { ...e, link, text, time };
     });
     paintLinks();
+    currentEdit = -1;
   }
   inputText.value = "";
   inputURL.value = "";
@@ -90,4 +123,12 @@ function setTimer() {
       if (toNumber(new Date()) === e.time) open(e.link, "_blank");
     });
   }, 30000);
+}
+
+function createAndAppendTo(tagName, appendTo, html, onclick) {
+  const e = document.createElement(tagName);
+  if (html) e.innerHTML = html;
+  if (appendTo) appendTo.append(e);
+  if (onclick) e.addEventListener("dblclick", onclick);
+  return e;
 }
