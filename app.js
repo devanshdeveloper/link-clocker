@@ -68,7 +68,9 @@ function createLink({ id, link, text, time, isOpenIn }) {
   const anchorDiv = createAndAppendTo("div", linkDiv);
   const iconImg = createAndAppendTo("img", anchorDiv);
   const anchor = createAndAppendTo("a", anchorDiv, text || link);
-  createAndAppendTo("span", linkDiv, link);
+  createAndAppendTo("span", linkDiv, link, () =>
+    navigator.clipboard.writeText(link)
+  );
   createAndAppendTo("span", linkDiv, time);
   const btnDiv = createAndAppendTo("div", linkDiv);
   createAndAppendTo("button", btnDiv, "Edit", () => {
@@ -92,9 +94,12 @@ function createLink({ id, link, text, time, isOpenIn }) {
 function openLink(text, link, isOpenIn) {
   if (isOpenIn) open(link, "_blank");
   else {
+    if (iframeEl.src === link) {
+      wrapper.style.display = "block";
+      return;
+    }
     iframeEl.src = link;
     showLinkText.innerHTML = text;
-    wrapper.style.display = "flex";
   }
 }
 
@@ -135,15 +140,18 @@ window.addEventListener("load", () => {
       inputOpenIn.checked
     );
   });
-  closeBtn.addEventListener("click", () => {
-    wrapper.style.display = "none";
-    iframeEl.src = "";
-  });
+  closeBtn.addEventListener("click", () => (wrapper.style.display = "none"));
   addEventListener("beforeunload", () => lsItem("links", linksArr));
   addEventListener("keydown", (e) => {
     let num = parseInt(e.key);
     let l = linksArr[num - 1];
     if (e.altKey && !isNaN(num)) openLink(l.text, l.link, l.isOpenIn);
+  });
+  iframeEl.addEventListener("load", () => (wrapper.style.display = "block"));
+  inputURL.addEventListener("focus", () => {
+    navigator.clipboard
+      .readText()
+      .then((text) => isUrl(text) && (inputURL.value = text));
   });
 });
 
@@ -160,10 +168,23 @@ function lsItem(key, value) {
   }
 }
 
+function isUrl(str) {
+  var pattern = new RegExp(
+    "^(https?:\\/\\/)?" + // protocol
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+      "(\\?[;&a-z\\d%_.~+=-]*)?" +
+      "(\\#[-a-z\\d_]*)?$",
+    "i"
+  );
+  return !!pattern.test(str);
+}
+
 function setTimer() {
   setInterval(() => {
     linksArr.forEach((e) => {
-      if (toNumber(new Date()) === e.time) openLink(e.text, e.link , e.isOpenIn);
+      if (toNumber(new Date()) === e.time) openLink(e.text, e.link, e.isOpenIn);
     });
   }, 30000);
 }
