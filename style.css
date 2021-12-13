@@ -20,7 +20,7 @@ body {
 }
 
 button,
-input {
+input , label {
   border-radius: 8px;
   font-size: 1.1rem;
   padding: 8px;
@@ -69,16 +69,46 @@ input {
   color: white;
 }
 
-.link .anchorDiv{
+.link .anchorDiv {
   display: flex;
   align-items: center;
   height: 25px;
   margin: 3px;
 }
-.link .anchorDiv img{
+.link .anchorDiv img {
   height: 25px;
   margin: 2px;
   cursor: pointer;
+}
+
+.wrapper {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.wrapper button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.wrapper p {
+  position: absolute;
+  top: 20px;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.iframeDiv iframe {
+  height: 80vh;
+  width: 80vw;
+  background-color: white;
 }
 
 @media only screen and (max-width: 700px) {
@@ -88,7 +118,7 @@ input {
     width: 100%;
     align-items: center;
   }
-  .link{
+  .link {
     width: 90%;
   }
   .container {

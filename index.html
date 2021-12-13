@@ -15,16 +15,22 @@
 <body>
     <form class="container">
         <input type="url" autocomplete="off" id="inputURL" placeholder="Paste Your Link Here">
+        <label for="inputIsOpen">
+            <input type="checkbox" id="inputIsOpen">
+            Open In New Tab</label>
         <input type="text" autocomplete="off" id="inputText" placeholder="Enter Text Here">
         <input type="time" id="inputTime" placeholder="Select Time Here">
         <input type="submit" />
     </form>
     <div class="links"></div>
+    <div class="wrapper">
+        <button>Close</button>
+        <p></p>
+        <div class="iframeDiv">
+            <iframe src="" frameborder="0"></iframe>
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
 
 </html>
-
-<!-- git add .
-git commit -m "fixed bugs"
-git push -->
