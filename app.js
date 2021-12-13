@@ -5,6 +5,11 @@ let myLink = [
     time: "",
   },
   {
+    link: "http://youtube.com/",
+    text: "YouTube",
+    time: "",
+  },
+  {
     link: "https://us05web.zoom.us/j/83857138123?pwd=SVJ1ZjFiTHJiWkdIY0l4YXk2YnJxQT09",
     text: "Business Studies",
     time: "09:00",
@@ -29,11 +34,6 @@ let myLink = [
     text: "Accounts",
     time: "11:40",
   },
-  {
-    link: "https://us04web.zoom.us/j/3279834528?pwd=K1IxWkJycUtOQ3RmQzVNMWYrMFYxdz09",
-    text: "Simplifier",
-    time: "18:00",
-  },
 ];
 // {
 //   link: "",
@@ -54,6 +54,7 @@ const wrapper = document.querySelector("wrapper");
 function createLink(id, link, text, time) {
   const linkDiv = createAndAppendTo("div", linksDiv);
   const anchorDiv = createAndAppendTo("div", linkDiv);
+  const iconImg = createAndAppendTo("img", anchorDiv);
   const anchor = createAndAppendTo("a", anchorDiv, text || link);
   createAndAppendTo("span", linkDiv, link);
   createAndAppendTo("span", linkDiv, time);
@@ -67,6 +68,8 @@ function createLink(id, link, text, time) {
   createAndAppendTo("button", btnDiv, "Delete", () =>
     paintLinks(linksArr.filter((e) => e.id !== id))
   );
+  iconImg.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
+  anchorDiv.classList.add("anchorDiv")
   anchor.href = link;
   anchor.target = "_blank";
   linkDiv.classList.add("link");
