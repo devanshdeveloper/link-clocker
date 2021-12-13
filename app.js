@@ -69,9 +69,10 @@ function createLink(id, link, text, time) {
     paintLinks(linksArr.filter((e) => e.id !== id))
   );
   iconImg.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
-  anchorDiv.classList.add("anchorDiv")
-  anchor.href = link;
-  anchor.target = "_blank";
+  anchorDiv.classList.add("anchorDiv");
+  anchor.href = link
+  anchor.target = "_blank"
+  iconImg.addEventListener("click", () => window.open(link));
   linkDiv.classList.add("link");
 }
 
