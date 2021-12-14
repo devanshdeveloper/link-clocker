@@ -15,31 +15,31 @@ let myLink = [
     link: "https://us05web.zoom.us/j/83857138123?pwd=SVJ1ZjFiTHJiWkdIY0l4YXk2YnJxQT09",
     text: "Business Studies",
     time: "09:00",
-    isOpenIn: false,
+    isOpenIn: true,
   },
   {
     link: "https://us05web.zoom.us/j/86259438079?pwd=c2xZMDY3VTdDZFlBRzhaWTU3aFpoZz09",
     text: "Maths",
     time: "09:40",
-    isOpenIn: false,
+    isOpenIn: true,
   },
   {
     link: "https://us04web.zoom.us/j/77295357372?pwd=MFVCcXpTUDlXSHpmYmNmSEtwWGdhZz09",
     text: "English",
     time: "10:20",
-    isOpenIn: false,
+    isOpenIn: true,
   },
   {
     link: "https://us04web.zoom.us/j/71844310834?pwd=MCswUjRLZnhsTmdmOGJoQnFYRTN1QT09",
     text: "Economics",
     time: "11:00",
-    isOpenIn: false,
+    isOpenIn: true,
   },
   {
     link: "https://zoom.us/j/4145799977?pwd=UFJMbHcyUVpjMEhjYW9iNzFWeXFtdz09",
     text: "Accounts",
     time: "11:40",
-    isOpenIn: false,
+    isOpenIn: true,
   },
 ];
 // {
@@ -83,6 +83,15 @@ function createLink({ id, link, text, time, isOpenIn }) {
   createAndAppendTo("button", btnDiv, "Delete", () =>
     paintLinks(linksArr.filter((e) => e.id !== id))
   );
+  const isOpenInEl = createAndAppendTo("input", btnDiv);
+  isOpenInEl.type = "checkbox";
+  isOpenInEl.classList.add("isOpenIn");
+  isOpenInEl.checked = isOpenIn;
+  isOpenInEl.addEventListener("change", () =>
+    linksArr.forEach((e, i) => {
+      if (e.id === id) linksArr[i] = { ...e, isOpenIn: isOpenInEl.checked };
+    })
+  );
   iconImg.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
   anchorDiv.classList.add("anchorDiv");
   anchor.href = link;
@@ -94,6 +103,7 @@ function createLink({ id, link, text, time, isOpenIn }) {
 function openLink(text, link, isOpenIn) {
   if (isOpenIn) open(link, "_blank");
   else {
+    hackIntoIframe();
     if (iframeEl.src === link) {
       wrapper.style.display = "block";
       return;
@@ -187,6 +197,10 @@ function setTimer() {
       if (toNumber(new Date()) === e.time) openLink(e.text, e.link, e.isOpenIn);
     });
   }, 30000);
+}
+
+function hackIntoIframe() {
+  console.dir(iframeEl);
 }
 
 function createAndAppendTo(tagName, appendTo, html, onclick) {
