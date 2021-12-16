@@ -95,8 +95,8 @@ label {
   display: none;
   height: 100vh;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  position: absolute;
+  background-color: black;
+  position: fixed;
   top: 0;
   bottom: 0;
 }

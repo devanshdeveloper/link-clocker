@@ -51,7 +51,10 @@ let myLink = [
 
 let currentEdit = -1;
 let linksArr = lsItem("links") || [];
-linksArr.forEach((e, i) => (e.id = i));
+linksArr.forEach((e, i) => {
+  e.id = i;
+  e.isOpened = false;
+});
 const inputURL = document.getElementById("inputURL");
 const inputText = document.getElementById("inputText");
 const inputTime = document.getElementById("inputTime");
@@ -89,10 +92,10 @@ function createLink({ id, link, text, time, isOpenIn }) {
   isOpenInEl.checked = isOpenIn;
   isOpenInEl.addEventListener("change", () =>
     linksArr.forEach((e, i) => {
-      if (e.id === id) linksArr[i] = { ...e, isOpenIn: isOpenInEl.checked };
+      if (e.id === id) linksArr[i].isOpenIn = isOpenInEl.checked;
     })
   );
-  iconImg.src = `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
+  iconImg.src = getIcon(link);
   anchorDiv.classList.add("anchorDiv");
   anchor.href = link;
   anchor.target = "_blank";
@@ -100,17 +103,20 @@ function createLink({ id, link, text, time, isOpenIn }) {
   linkDiv.classList.add("link");
 }
 
-function openLink(text, link, isOpenIn) {
-  if (isOpenIn) open(link, "_blank");
-  else {
-    hackIntoIframe();
-    if (iframeEl.src === link) {
-      wrapper.style.display = "block";
-      return;
-    }
-    iframeEl.src = link;
-    showLinkText.innerHTML = text;
-  }
+function openLink(text, link, toNotify, isOpenIn) {
+  isOpenIn
+    ? open(link, "_blank")
+    : toNotify
+    ? notify(text, { body: link, icon: getIcon(link) }, () =>
+        openIframe(text, link)
+      )
+    : openIframe(text, link);
+}
+
+function openIframe(text, link) {
+  if (iframeEl.src === link) return (wrapper.style.display = "block");
+  iframeEl.src = link;
+  showLinkText.innerHTML = text;
 }
 
 function paintLinks(newLinksArr) {
@@ -121,13 +127,24 @@ function paintLinks(newLinksArr) {
 
 function updateLink(link, text, time, isOpenIn) {
   if (currentEdit === -1) {
-    let id = (linksArr[linksArr.length - 1]?.id || -1) + 1;
-    linksArr.push({ id, link, text, time, isOpenIn });
+    linksArr.push({
+      id: (linksArr[linksArr.length - 1]?.id || -1) + 1,
+      link,
+      text: text || new URL(link).host,
+      time,
+      isOpenIn,
+    });
     createLink(linksArr[linksArr.length - 1]);
   } else {
     linksArr.forEach((e, i) => {
       if (e.id === currentEdit)
-        linksArr[i] = { ...e, link, text, time, isOpenIn };
+        linksArr[i] = {
+          ...e,
+          link,
+          text: text || new URL(link).host,
+          time,
+          isOpenIn,
+        };
     });
     paintLinks();
     currentEdit = -1;
@@ -138,7 +155,7 @@ function updateLink(link, text, time, isOpenIn) {
   inputOpenIn.checked = false;
 }
 
-window.addEventListener("load", () => {
+addEventListener("load", () => {
   setTimer();
   paintLinks();
   form.addEventListener("submit", (e) => {
@@ -155,7 +172,7 @@ window.addEventListener("load", () => {
   addEventListener("keydown", (e) => {
     let num = parseInt(e.key);
     let l = linksArr[num - 1];
-    if (e.altKey && !isNaN(num)) openLink(l.text, l.link, l.isOpenIn);
+    if (e.altKey && !isNaN(num)) openLink(l.text, l.link, false, l.isOpenIn);
   });
   iframeEl.addEventListener("load", () => (wrapper.style.display = "block"));
   inputURL.addEventListener("focus", () => {
@@ -179,13 +196,8 @@ function lsItem(key, value) {
 }
 
 function isUrl(str) {
-  var pattern = new RegExp(
-    "^(https?:\\/\\/)?" + // protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" +
-      "(\\#[-a-z\\d_]*)?$",
+  let pattern = new RegExp(
+    "^(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$",
     "i"
   );
   return !!pattern.test(str);
@@ -194,13 +206,15 @@ function isUrl(str) {
 function setTimer() {
   setInterval(() => {
     linksArr.forEach((e) => {
-      if (toNumber(new Date()) === e.time) openLink(e.text, e.link, e.isOpenIn);
+      if (toNumber(new Date()) === e.time && !e.isOpened) {
+        openLink(e.text, e.link, true, e.isOpenIn);
+        e.isOpened = true;
+        setTimeout(() => {
+          e.isOpened = false;
+        }, 60000);
+      }
     });
-  }, 30000);
-}
-
-function hackIntoIframe() {
-  console.dir(iframeEl);
+  }, 10000);
 }
 
 function createAndAppendTo(tagName, appendTo, html, onclick) {
@@ -212,3 +226,26 @@ function createAndAppendTo(tagName, appendTo, html, onclick) {
 }
 
 // javascript: linksArr = myLink
+function notify(title, options = {}, onClickNotification = () => {}) {
+  const permission = Notification.permission;
+  if (permission === "granted") showNotification();
+  else if (["default", "denied"].includes(permission))
+    requestAndShowNotification();
+  function showNotification() {
+    const notification = new Notification(title, options);
+    notification.onclick = () => {
+      onClickNotification();
+      notification.close();
+      parent.focus();
+    };
+  }
+  function requestAndShowNotification() {
+    Notification.requestPermission(
+      (permission) => permission === "granted" && showNotification()
+    );
+  }
+}
+
+function getIcon(link) {
+  return `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
+}
