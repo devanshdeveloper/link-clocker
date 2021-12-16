@@ -107,9 +107,16 @@ function openLink(text, link, toNotify, isOpenIn) {
   isOpenIn
     ? open(link, "_blank")
     : toNotify
-    ? notify(text, { body: link, icon: getIcon(link) }, () =>
-        openIframe(text, link)
-      )
+    ? Push.create(text, {
+        body: link,
+        icon: getIcon(link),
+        timeout: 8000,
+        onClick: function () {
+          window.focus();
+          this.close();
+          openIframe(text, link);
+        },
+      })
     : openIframe(text, link);
 }
 
@@ -154,6 +161,8 @@ function updateLink(link, text, time, isOpenIn) {
   inputTime.value = "";
   inputOpenIn.checked = false;
 }
+
+console.log(Push.create);
 
 addEventListener("load", () => {
   setTimer();
@@ -226,25 +235,25 @@ function createAndAppendTo(tagName, appendTo, html, onclick) {
 }
 
 // javascript: linksArr = myLink
-function notify(title, options = {}, onClickNotification = () => {}) {
-  const permission = Notification.permission;
-  if (permission === "granted") showNotification();
-  else if (["default", "denied"].includes(permission))
-    requestAndShowNotification();
-  function showNotification() {
-    const notification = new Notification(title, options);
-    notification.onclick = () => {
-      onClickNotification();
-      notification.close();
-      parent.focus();
-    };
-  }
-  function requestAndShowNotification() {
-    Notification.requestPermission(
-      (permission) => permission === "granted" && showNotification()
-    );
-  }
-}
+// function notify(title, options = {}, onClickNotification = () => {}) {
+//   const permission = Notification.permission;
+//   if (permission === "granted") showNotification();
+//   else if (["default", "denied"].includes(permission))
+//     requestAndShowNotification();
+//   function showNotification() {
+//     const notification = new Notification(title, options);
+//     notification.onclick = () => {
+//       onClickNotification();
+//       notification.close();
+//       parent.focus();
+//     };
+//   }
+//   function requestAndShowNotification() {
+//     Notification.requestPermission(
+//       (permission) => permission === "granted" && showNotification()
+//     );
+//   }
+// }
 
 function getIcon(link) {
   return `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
