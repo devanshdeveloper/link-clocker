@@ -23,7 +23,7 @@ button,
 input,
 label {
   border-radius: 8px;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   padding: 8px;
   background-color: #303030;
   color: white;
@@ -59,7 +59,7 @@ label {
 .link a {
   color: white;
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin: 2px;
 }
 
@@ -141,6 +141,6 @@ label {
     width: 100%;
     flex-direction: column;
     gap: 10px;
-    height: 300px;
+    height: 60vh;
   }
 }
