@@ -1,4 +1,4 @@
-let myLink = [
+const myLink = [
   {
     link: "https://www.google.com/",
     text: "Google",
@@ -71,9 +71,11 @@ function createLink({ id, link, text, time, isOpenIn }) {
   const anchorDiv = createAndAppendTo("div", linkDiv);
   const iconImg = createAndAppendTo("img", anchorDiv);
   const anchor = createAndAppendTo("a", anchorDiv, text || link);
-  createAndAppendTo("span", linkDiv, link, () =>
-    navigator.clipboard.writeText(link)
-  );
+  createAndAppendTo("span", linkDiv, link, function () {
+    navigator.clipboard.writeText(link);
+    this.innerHTML = `Copied`;
+    setTimeout(() => (this.innerHTML = link), 5000);
+  });
   createAndAppendTo("span", linkDiv, time);
   const btnDiv = createAndAppendTo("div", linkDiv);
   createAndAppendTo("button", btnDiv, "Edit", () => {
@@ -85,6 +87,9 @@ function createLink({ id, link, text, time, isOpenIn }) {
   });
   createAndAppendTo("button", btnDiv, "Delete", () =>
     paintLinks(linksArr.filter((e) => e.id !== id))
+  );
+  createAndAppendTo("button", btnDiv, "Share", () =>
+    shareLink({ text: link, title: text, url: link })
   );
   const isOpenInEl = createAndAppendTo("input", btnDiv);
   isOpenInEl.type = "checkbox";
@@ -164,7 +169,6 @@ function updateLink(link, text, time, isOpenIn) {
   inputOpenIn.checked = false;
 }
 
-
 addEventListener("DOMContentLoaded", () => {
   setTimer();
   paintLinks();
@@ -239,4 +243,10 @@ function createAndAppendTo(tagName, appendTo, html, onclick) {
 
 function getIcon(link) {
   return `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
+}
+
+function shareLink(data) {
+  navigator.canShare
+    ? navigator.share(data).catch(console.log)
+    : console.log("Your system doesn't support sharing files.");
 }
