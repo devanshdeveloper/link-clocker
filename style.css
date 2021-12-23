@@ -143,4 +143,7 @@ label {
     gap: 10px;
     height: 60vh;
   }
+  input {
+     max-width: 80vw;
+  }
 }

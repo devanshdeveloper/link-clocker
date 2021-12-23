@@ -73,7 +73,7 @@ function createLink({ id, link, text, time, isOpenIn }) {
   const anchor = createAndAppendTo("a", anchorDiv, text || link);
   createAndAppendTo("span", linkDiv, link, function () {
     navigator.clipboard.writeText(link);
-    this.innerHTML = `Copied`;
+    this.innerHTML = `Copied : ${link}`;
     setTimeout(() => (this.innerHTML = link), 5000);
   });
   createAndAppendTo("span", linkDiv, time);
@@ -89,7 +89,7 @@ function createLink({ id, link, text, time, isOpenIn }) {
     paintLinks(linksArr.filter((e) => e.id !== id))
   );
   createAndAppendTo("button", btnDiv, "Share", () =>
-    shareLink({ text: link, title: text, url: link })
+    shareLink({ text, title: text, url: link })
   );
   const isOpenInEl = createAndAppendTo("input", btnDiv);
   isOpenInEl.type = "checkbox";
