@@ -88,9 +88,10 @@ function createLink({ id, link, text, time, isOpenIn }) {
   createAndAppendTo("button", btnDiv, "Delete", () =>
     paintLinks(linksArr.filter((e) => e.id !== id))
   );
-  createAndAppendTo("button", btnDiv, "Share", () =>
-    shareLink({ text, title: text, url: link })
-  );
+  navigator.share &&
+    createAndAppendTo("button", btnDiv, "Share", () =>
+      shareLink({ text, title: text, url: link })
+    );
   const isOpenInEl = createAndAppendTo("input", btnDiv);
   isOpenInEl.type = "checkbox";
   isOpenInEl.classList.add("isOpenIn");
@@ -246,7 +247,5 @@ function getIcon(link) {
 }
 
 function shareLink(data) {
-  navigator.canShare
-    ? navigator.share(data).catch(console.log)
-    : console.log("Your system doesn't support sharing files.");
+  navigator.share(data).catch(console.log);
 }
