@@ -104,14 +104,14 @@ function createLink({ id, link, text, time, isOpenIn }) {
   iconImg.src = getIcon(link);
   anchorDiv.classList.add("anchorDiv");
   anchor.href = link;
-  anchor.target = "_blank";
+  anchor.target = "blank";
   iconImg.addEventListener("click", () => openLink(text, link));
   linkDiv.classList.add("link");
 }
 
 function openLink(text, link, toNotify, isOpenIn) {
   if (document.visibilityState === "visible") openIframe(text, link);
-  else if (isOpenIn) open(link, "_blank");
+  else if (isOpenIn) open(link, "blank");
   else {
     if (toNotify)
       Push.create(text, {
@@ -190,6 +190,9 @@ addEventListener("DOMContentLoaded", () => {
     if (e.altKey && !isNaN(num)) openLink(l.text, l.link, false, l.isOpenIn);
   });
   iframeEl.addEventListener("load", () => (wrapper.style.display = "block"));
+  iframeEl.addEventListener("error", () =>
+    iframeEl.src += " "
+  );
   inputURL.addEventListener("focus", () => {
     navigator.clipboard
       .readText()
