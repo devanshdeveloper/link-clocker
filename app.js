@@ -95,8 +95,8 @@ function createLink({ id, link, text, time, isOpenIn, toOpen }) {
       navigator.share({ text, title: text, url: link })
     );
   if (time) {
-    createCheckbox(isOpenIn, "isOpenIn", btnDiv);
-    createCheckbox(toOpen, "toOpen", btnDiv);
+    createCheckbox(isOpenIn, "isOpenIn", btnDiv, currentIndex);
+    createCheckbox(toOpen, "toOpen", btnDiv, currentIndex);
   } else {
     linksArr[currentIndex].isOpenIn = true;
     linksArr[currentIndex].toOpen = false;
@@ -127,19 +127,16 @@ function openLink(text, link, toNotify, isOpenIn) {
     else openIframe(text, link);
   }
 }
-
 function openIframe(text, link) {
   if (iframeEl.src === link) return (wrapper.style.display = "block");
   iframeEl.src = link;
   showLinkText.innerHTML = text;
 }
-
 function paintLinks(newLinksArr) {
   if (newLinksArr) linksArr = newLinksArr;
   linksDiv.innerHTML = "";
   linksArr.forEach(createLink);
 }
-
 function updateLink(link, text, time, isOpenIn, toOpen) {
   if (!isUrl(link)) return alert("invalid url");
   const isEdit = !!~currentEdit;
@@ -245,13 +242,14 @@ function changeIndex(from, to) {
   linksArr.splice(to, 0, linksArr.splice(from, 1)[0]);
   paintLinks();
 }
-function createCheckbox(isChecked, prop, appendTo) {
+function createCheckbox(isChecked, prop, appendTo, currentIndex) {
   const checkbox = createAndAppendTo("input", appendTo);
   checkbox.type = "checkbox";
   checkbox.checked = isChecked;
   checkbox.classList.add("isOpenIn");
-  checkbox.addEventListener("change", () => {
+  checkbox.addEventListener("input", () => {
     linksArr[currentIndex][prop] = checkbox.checked;
+    console.log(linksArr);
   });
   checkbox.title = prop;
 }
