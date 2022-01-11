@@ -1,52 +1,59 @@
 const myLink = [
   {
-    link: "https://www.google.com/",
+    url: "https://www.google.com/",
     text: "Google",
     time: "",
     toOpen: true,
-    isOpenIn: true,
+    toNotify: false,
+    openIn: "New Window",
   },
   {
-    link: "http://youtube.com/",
+    url: "http://youtube.com/",
     text: "YouTube",
     time: "",
     toOpen: true,
-    isOpenIn: true,
+    toNotify: false,
+    openIn: "New Window",
   },
   {
-    link: "https://us04web.zoom.us/j/71844310834?pwd=MCswUjRLZnhsTmdmOGJoQnFYRTN1QT09",
+    url: "https://us04web.zoom.us/j/71844310834?pwd=MCswUjRLZnhsTmdmOGJoQnFYRTN1QT09",
     text: "Econmics",
     time: "09:10",
     toOpen: true,
-    isOpenIn: false,
+    toNotify: false,
+    openIn: "New Tab",
   },
   {
-    link: "https://us05web.zoom.us/j/85988493170?pwd=c1BvQVloRkZoYmFyUVFDRE5VS3pPdz09",
+    url: "https://us05web.zoom.us/j/85988493170?pwd=c1BvQVloRkZoYmFyUVFDRE5VS3pPdz09",
     text: "Maths",
     time: "09:45",
     toOpen: true,
-    isOpenIn: false,
+    toNotify: false,
+    openIn: "New Tab",
   },
   {
-    link: "https://us04web.zoom.us/j/77295357372?pwd=MFVCcXpTUDlXSHpmYmNmSEtwWGdhZz09",
+    url: "https://us04web.zoom.us/j/77295357372?pwd=MFVCcXpTUDlXSHpmYmNmSEtwWGdhZz09",
     text: "English",
     time: "10:20",
     toOpen: true,
-    isOpenIn: false,
+    toNotify: false,
+    openIn: "New Tab",
   },
   {
-    link: "https://zoom.us/j/4145799977?pwd=UFJMbHcyUVpjMEhjYW9iNzFWeXFtdz09",
+    url: "https://zoom.us/j/4145799977?pwd=UFJMbHcyUVpjMEhjYW9iNzFWeXFtdz09",
     text: "Accounts",
     time: "10:55",
     toOpen: true,
-    isOpenIn: false,
+    toNotify: false,
+    openIn: "New Tab",
   },
   {
-    link: "https://us05web.zoom.us/j/9766781918?pwd=Qzc3L0ZDUnIxTmVocStzay9zSll2Zz09",
+    url: "https://us05web.zoom.us/j/9766781918?pwd=Qzc3L0ZDUnIxTmVocStzay9zSll2Zz09",
     text: "Business Studies",
     time: "11:50",
     toOpen: true,
-    isOpenIn: false,
+    toNotify: false,
+    openIn: "New Tab",
   },
 ];
 let currentEdit = -1;
@@ -55,138 +62,178 @@ linksArr.forEach((e, i) => {
   e.id = i;
   e.isOpened = false;
 });
-const inputURL = document.getElementById("inputURL");
-const inputText = document.getElementById("inputText");
-const inputTime = document.getElementById("inputTime");
-const form = document.getElementsByClassName("container")[0];
-const linksDiv = document.getElementsByClassName("links")[0];
 const wrapper = document.querySelector(".wrapper");
+const form = document.querySelector(".container");
+const linksDiv = document.querySelector(".links");
 const iframeEl = document.querySelector(".iframeDiv iframe");
-const closeBtn = document.querySelector(".wrapper button");
-const showLinkText = document.querySelector(".wrapper p");
-const inputOpenIn = document.getElementById("inputIsOpen");
-const inputToOpen = document.getElementById("inputToOpen");
-function createLink({ id, link, text, time, isOpenIn, toOpen }) {
-  const currentIndex = getIndexWithId(id);
-  const linkDiv = createAndAppendTo("div", linksDiv);
-  const anchorDiv = createAndAppendTo("div", linkDiv);
-  const iconImg = createAndAppendTo("img", anchorDiv);
-  const anchor = createAndAppendTo("a", anchorDiv, text || link);
-  createAndAppendTo("span", linkDiv, link, function () {
-    navigator.clipboard.writeText(link);
-    this.innerHTML = `Copied : ${link}`;
-    setTimeout(() => (this.innerHTML = link), 5000);
-  });
-  createAndAppendTo("span", linkDiv, time);
-  const btnDiv = createAndAppendTo("div", linkDiv);
-  createAndAppendTo("button", btnDiv, "Edit", () => {
-    currentEdit = id;
-    inputText.value = text;
-    inputURL.value = link;
-    inputTime.value = time;
-    inputOpenIn.checked = isOpenIn;
-    inputToOpen.checked = toOpen;
-  });
-  createAndAppendTo("button", btnDiv, "Delete", () =>
-    paintLinks(linksArr.filter((e) => e.id !== id))
-  );
-  navigator.share &&
-    createAndAppendTo("button", btnDiv, "Share", () =>
-      navigator.share({ text, title: text, url: link })
-    );
-  if (time) {
-    createCheckbox(isOpenIn, "isOpenIn", btnDiv, currentIndex);
-    createCheckbox(toOpen, "toOpen", btnDiv, currentIndex);
-  } else {
-    linksArr[currentIndex].isOpenIn = true;
-    linksArr[currentIndex].toOpen = false;
-  }
-  iconImg.src = getIcon(link);
-  anchorDiv.classList.add("anchorDiv");
-  anchor.href = link;
-  anchor.target = "blank";
-  iconImg.addEventListener("click", () => openLink(text, link));
-  linkDiv.classList.add("link");
-}
-
-function openLink(text, link, toNotify, isOpenIn) {
-  if (document.visibilityState === "visible") openIframe(text, link);
-  else if (isOpenIn) open(link, "blank");
-  else {
-    if (toNotify)
-      Push.create(text, {
-        body: link,
-        icon: getIcon(link),
-        timeout: 8000,
-        onClick: function () {
-          window.focus();
-          this.close();
-          openIframe(text, link);
-        },
-      });
-    else openIframe(text, link);
-  }
-}
-function openIframe(text, link) {
-  if (iframeEl.src === link) return (wrapper.style.display = "block");
-  iframeEl.src = link;
-  showLinkText.innerHTML = text;
-}
-function paintLinks(newLinksArr) {
-  if (newLinksArr) linksArr = newLinksArr;
-  linksDiv.innerHTML = "";
-  linksArr.forEach(createLink);
-}
-function updateLink(link, text, time, isOpenIn, toOpen) {
-  if (!isUrl(link)) return alert("invalid url");
-  const isEdit = !!~currentEdit;
-  linksArr[isEdit ? getIndexWithId(currentEdit) : linksArr.length] = {
-    id: isEdit ? currentEdit : (linksArr[linksArr.length - 1]?.id || -1) + 1,
-    link,
-    text: text || new URL(link).host,
-    time,
-    toOpen,
-    isOpenIn,
-  };
-  paintLinks();
-  currentEdit = -1;
-  inputText.value = "";
-  inputURL.value = "";
-  inputTime.value = "";
-  inputOpenIn.checked = false;
-  inputToOpen.checked = true;
-}
-
+const ctxMenu = document.getElementById("menu");
+// selects
+const showLinkText = wrapper.querySelector("p");
+const [refreshBtn, closeBtn] = wrapper.querySelectorAll("button");
+const openInInput = document.getElementById("openInInput");
+const openInLinkInput = document.getElementById("openIn");
+const [URLInput, textInput, timeInput, toOpenInput] =
+  form.getElementsByTagName("input");
+const [editBtn, deleteBtn, copyBtn, shareBtn] =
+  ctxMenu.getElementsByTagName("button");
+const [toOpenLinkInput, toNotifyLinkInput] =
+  ctxMenu.getElementsByTagName("input");
 addEventListener("DOMContentLoaded", () => {
   setTimer();
   paintLinks();
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    updateLink(
-      inputURL.value,
-      inputText.value,
-      inputTime.value,
-      inputOpenIn.checked,
-      inputToOpen.checked
-    );
-  });
-  closeBtn.addEventListener("click", () => (wrapper.style.display = "none"));
+  refreshBtn.addEventListener("click", () => (iframeEl.src = iframeEl.src));
+  iframeEl.addEventListener("load", showIframe);
   addEventListener("beforeunload", () => lsItem("links", linksArr));
   addEventListener("keydown", (e) => {
     let num = parseInt(e.key);
     let l = linksArr[num - 1];
     if (!e.altKey) return;
-    if (!isNaN(num)) openLink(l.text, l.link, false, l.isOpenIn);
+    if (!isNaN(num)) openLink(l.text, l.link, "iframe");
   });
-  iframeEl.addEventListener("load", () => (wrapper.style.display = "block"));
-  iframeEl.addEventListener("error", () => (iframeEl.src += " "));
-  inputURL.addEventListener("focus", () => {
+  URLInput.addEventListener("focus", function () {
     navigator.clipboard
       .readText()
-      .then((text) => isUrl(text) && (inputURL.value = text));
+      .then((text) => isUrl(text) && (this.value = text));
   });
 });
-
+// handlers
+function handleSubmit(e) {
+  e.preventDefault();
+  const url = URLInput.value;
+  if (!isUrl(url)) return alert("invalid url");
+  const isEdit = !!~currentEdit;
+  linksArr[isEdit ? getIndexWithId(currentEdit) : linksArr.length] = {
+    id: isEdit ? currentEdit : (linksArr[linksArr.length - 1]?.id || -1) + 1,
+    url,
+    text: textInput.value || new URL(url).host,
+    time: timeInput.value,
+    toOpen: toOpenInput.checked,
+    toNotify: false,
+    openIn: openInInput.value,
+  };
+  paintLinks();
+  setInput();
+}
+// links
+function paintLinks(newLinksArr) {
+  if (newLinksArr) linksArr = newLinksArr;
+  linksDiv.innerHTML = "";
+  linksArr.forEach(createLink);
+}
+// Dom
+function createLink({ id, url, text, time, toOpen, toNotify, openIn }) {
+  const currentIndex = getIndexWithId(id);
+  const linkDiv = create("div", linksDiv);
+  const anchorDiv = create("div", linkDiv);
+  const iconImg = create("img", anchorDiv, "Open In : " + openIn, () => {
+    openLink(text, url, openIn);
+  });
+  create("a", anchorDiv, text || url, () => {
+    openLink(text, url, "New Tab");
+  });
+  create("span", linkDiv, url, function () {
+    navigator.clipboard
+      .writeText(url)
+      .then(() => (this.innerHTML = "Copied : " + url));
+    setTimeout(() => (this.innerHTML = url), 2000);
+  });
+  create("span", linkDiv, time);
+  iconImg.src = getIcon(url);
+  anchorDiv.classList.add("anchorDiv");
+  linkDiv.classList.add("link");
+  function editLink() {
+    showMenu(false);
+    currentEdit = id;
+    setInput(url, text, time, openIn, toOpen);
+  }
+  function deleteLink() {
+    showMenu(false);
+    paintLinks(linksArr.filter((e) => e.id !== id));
+  }
+  function shareLink() {
+    showMenu(false);
+    navigator.share({ text, title: text, url: url });
+  }
+  function copyLink() {
+    showMenu(false);
+    navigator.clipboard.writeText(url).then(() => (this.innerHTML = "Copied"));
+    setTimeout(() => (this.innerHTML = "Copy"), 2000);
+  }
+  function handleToNotify() {
+    linksArr[currentIndex].toNotify = this.checked;
+    paintLinks();
+  }
+  function handleToOpen() {
+    linksArr[currentIndex].toOpen = this.checked;
+    paintLinks();
+  }
+  function handleOpenIn() {
+    linksArr[currentIndex].openIn = this.value;
+    paintLinks();
+  }
+  linkDiv.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    if (ctxMenu.style.display === "flex") {
+      ctxMenu.style.display = "none";
+      editBtn.removeEventListener("click", editLink);
+      deleteBtn.removeEventListener("click", deleteLink);
+      copyBtn.removeEventListener("click", copyLink);
+      shareBtn.removeEventListener("click", shareLink);
+      toNotifyLinkInput.removeEventListener("input", handleToNotify);
+      toOpenLinkInput.removeEventListener("input", handleToOpen);
+      openInLinkInput.removeEventListener("input", handleOpenIn);
+    } else {
+      ctxMenu.style.display = "flex";
+      ctxMenu.style.top = e.pageY + "px";
+      ctxMenu.style.left = e.pageX + "px";
+      editBtn.addEventListener("click", editLink);
+      deleteBtn.addEventListener("click", deleteLink);
+      copyBtn.addEventListener("click", copyLink);
+      shareBtn.addEventListener("click", shareLink);
+      toNotifyLinkInput.addEventListener("input", handleToNotify);
+      toOpenLinkInput.addEventListener("input", handleToOpen);
+      openInLinkInput.addEventListener("input", handleOpenIn);
+      toNotifyLinkInput.checked = toNotify;
+      toOpenLinkInput.checked = toOpen;
+      openInLinkInput.value = openIn;
+    }
+  });
+}
+function openLink(text, link, openIn = "", toNotify) {
+  // openIn : Iframe, New Tab, New Window
+  if (toNotify)
+    Push.create(text, {
+      body: link,
+      icon: getIcon(link),
+      timeout: 8000,
+      onClick: function () {
+        window.focus();
+        this.close();
+        openLink(text, link, openIn);
+      },
+    });
+  else {
+    if (openIn === "Iframe") openIframe();
+    else if (openIn === "New Window")
+      open(link, "blank", "height=570,width=520");
+    else open(link, "blank");
+  }
+}
+function openIframe(text, link) {
+  if (iframeEl.src === link) return showIframe();
+  iframeEl.src = link;
+  showLinkText.innerHTML = text;
+  showLinkText.title = link;
+  const showTimeout = setTimeout(showIframe, 2000);
+  closeBtn.addEventListener("click", () => {
+    showIframe(false);
+    clearTimeout(showTimeout);
+  });
+}
+function showIframe(bool = true) {
+  if (!wrapper.style.display === bool ? "block" : "none")
+    wrapper.style.display = bool ? "block" : "none";
+}
 const pad = (n) => (n < 10 ? "0" + n : n);
 function toNumber(t) {
   return `${pad(t.getHours())}:${pad(t.getMinutes())}`;
@@ -208,7 +255,7 @@ function setTimer() {
   setInterval(() => {
     linksArr.forEach((e) => {
       if (e.toOpen && !e.isOpened && toNumber(new Date()) === e.time) {
-        openLink(e.text, e.link, true, e.isOpenIn);
+        openLink(e.text, e.url, e.openIn, e.toNotify);
         e.isOpened = true;
         setTimeout(() => {
           e.isOpened = false;
@@ -217,20 +264,9 @@ function setTimer() {
     });
   }, 10000);
 }
-function createAndAppendTo(tagName, appendTo, html, onclick) {
-  const e = document.createElement(tagName);
-  if (appendTo) {
-    appendTo.append(e);
-    if (html) {
-      e.innerHTML = html;
-      e.title = html;
-      if (onclick) e.addEventListener("click", onclick);
-    }
-  }
-  return e;
-}
 // javascript: linksArr = myLink
 function getIcon(link) {
+  if (link.includes("web.zoom.us")) link = "https://zoom.us";
   return `https://s2.googleusercontent.com/s2/favicons?domain_url=${link}`;
 }
 function getIndexWithId(id) {
@@ -242,14 +278,29 @@ function changeIndex(from, to) {
   linksArr.splice(to, 0, linksArr.splice(from, 1)[0]);
   paintLinks();
 }
-function createCheckbox(isChecked, prop, appendTo, currentIndex) {
-  const checkbox = createAndAppendTo("input", appendTo);
-  checkbox.type = "checkbox";
-  checkbox.checked = isChecked;
-  checkbox.classList.add("isOpenIn");
-  checkbox.addEventListener("input", () => {
-    linksArr[currentIndex][prop] = checkbox.checked;
-    console.log(linksArr);
-  });
-  checkbox.title = prop;
+function create(tagName, appendTo, html, onclick) {
+  const e = document.createElement(tagName);
+  if (appendTo) appendTo.append(e);
+  if (html) {
+    e.innerHTML = html;
+    e.title = html;
+  }
+  if (onclick) e.addEventListener("click", onclick);
+  return e;
+}
+function setInput(
+  url = "",
+  text = "",
+  time = "",
+  openIn = "New Tab",
+  toOpen = false
+) {
+  URLInput.value = url;
+  textInput.value = text;
+  timeInput.value = time;
+  openInInput.value = openIn;
+  toOpenInput.checked = toOpen;
+}
+function showMenu(bool = true) {
+  ctxMenu.style.display = bool ? "flex" : "none";
 }

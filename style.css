@@ -1,130 +1,124 @@
-* {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   font-family: "Poppins";
   box-sizing: border-box;
 }
 
+:root {
+  --blackShade: rgba(0, 0, 0, 0.3);
+  --background: #5900ff;
+  --textColor: #fff;
+  --secondaryBackground: #fff;
+}
+
 body {
-  background-color: #303030;
+  background-color: var(--background);
   min-height: 100vh;
   width: 100%;
 }
+
 .container {
-  background-color: #202020;
   width: 100%;
+  padding: 2rem;
   display: flex;
-  height: 200px;
   justify-content: space-evenly;
   align-items: center;
+  background-color: var(--blackShade);
 }
 
 button,
 input,
 label {
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-size: 1.3rem;
-  padding: 8px;
-  background-color: #303030;
-  color: white;
   cursor: pointer;
+  padding: 0.3rem;
+  margin: 0.3rem;
+  background-color: var(--secondaryBackground);
 }
 
 .links {
   display: grid;
   grid-template-columns: 25% 25% 25% 25%;
 }
-
 .link {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-radius: 8px;
-  padding: 4px;
-  margin: 10px;
-  background-color: #202020;
+  color: var(--textColor);
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--blackShade);
 }
-
 .link span {
-  margin: 2px;
+  margin: 0.1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.links button {
-  font-size: 1.1rem;
-  margin: 2px;
-}
-
 .link a {
-  color: white;
+  color: var(--textColor);
   text-decoration: none;
   font-size: 1.1rem;
-  margin: 2px;
+  margin: 0.1rem;
 }
-
 .link a:hover {
   text-decoration: underline;
 }
-.link span {
-  color: white;
-}
-
 .link .anchorDiv {
   display: flex;
   align-items: center;
   height: 25px;
   margin: 3px;
 }
-
-.isOpenIn {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  top: calc(50% - 10px);
-  float: right;
-}
-
 .link .anchorDiv img {
   height: 25px;
   margin: 2px;
   cursor: pointer;
 }
-
 .wrapper {
   display: none;
   height: 100vh;
   width: 100%;
-  background-color: black;
+  background-color: var(--background);
   position: fixed;
   top: 0;
   bottom: 0;
-}
-
-.wrapper p {
-  color: #fff;
+  color: var(--textColor);
   font-size: 1.5rem;
 }
-
 .wrapper .actions {
-  width: 100%;
-  height: 10vh;
   display: flex;
   align-items: center;
   justify-content: space-around;
+  width: 100%;
+  height: 10vh;
 }
-
 .iframeDiv {
   height: 90vh;
   width: 100%;
 }
-
 .iframeDiv iframe {
   height: 100%;
   width: 100%;
   background-color: white;
 }
 
+#menu {
+  display: none;
+  flex-direction: column;
+  width: 200px;
+  background-color: var(--blackShade);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  position: absolute;
+}
+#menu button {
+  font-size: 1.1rem;
+}
 @media only screen and (max-width: 700px) {
   .links {
     display: flex;
@@ -144,6 +138,6 @@ label {
     height: 60vh;
   }
   input {
-     max-width: 80vw;
+    max-width: 80vw;
   }
 }

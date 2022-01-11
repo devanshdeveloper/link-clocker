@@ -14,28 +14,59 @@
 
 <body>
     <form class="container">
-        <input type="url" autocomplete="off" id="inputURL" placeholder="Click To Get Paste Link">
-        <label for="inputIsOpen">
-            <input type="checkbox" id="inputIsOpen">Open In New Tab</label>
-        <label for="inputIsOpen">
-            <input type="checkbox" id="inputToOpen" checked>Open??</label>
-        <input type="text" autocomplete="off" spellcheck="true" id="inputText" placeholder="Enter Text Here">
-        <input type="time" id="inputTime" placeholder="Select Time Here">
-        <input type="submit" />
+        <input type="url" autocomplete="off" placeholder="Click To Get Paste Link">
+        <input type="text" autocomplete="off" spellcheck="true" placeholder="Enter Text Here">
+        <input type="time" placeholder="Select Time Here">
+        <label for="openInInput">
+            Open In??
+            <select id="openInInput">
+                <option value="Iframe">Inside Tab</option>
+                <option value="New Tab">New Tab</option>
+                <option value="New Window">New Window</option>
+            </select>
+        </label>        
+        <label for="inputToOpen">
+            <input type="checkbox" id="inputToOpen" checked>Open??
+        </label>
+        <input type="submit" value="Add Link"/>
     </form>
     <div class="links"></div>
     <div class="wrapper">
         <div class="actions">
             <p></p>
-            <button>Close</button>
+            <div class="btns">
+                <button>Refresh</button>
+                <button>Close</button>
+            </div>
         </div>
         <div class="iframeDiv">
             <iframe src="" frameborder="0"></iframe>
         </div>
     </div>
+    <div id="menu">
+        <button>Edit</button>
+        <button>Delete</button>
+        <button>Copy</button>
+        <button>Share</button>
+        <label for="inputToOpen">
+            <input type="checkbox" id="inputToOpen"> Auto Open??
+        </label>
+        <label for="inputToNotify">
+            <input type="checkbox" id="inputToNotify"> Notify??
+        </label>
+        <label for="openIn">
+            Open In??
+            <select id="openIn">
+                <option value="Iframe">Inside Tab</option>
+                <option value="New Tab">New Tab</option>
+                <option value="New Window">New Window</option>
+            </select>
+        </label>
+    </div>
     <script src="https://pushjs.org/scripts/push.min.js" defer></script>
     <script src="app.js" defer></script>
 </body>
+
 </html>
 
 <!-- git add .
